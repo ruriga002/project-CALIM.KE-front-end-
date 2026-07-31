@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import Button from '../components/Button'
 import { fetchProducts } from '../../api/api.js'
+import { useAuth } from '../../auth/useAuth.js'
 import { useCart } from '../../context/CartContext.jsx'
 
 // Product detail page — loads canonical product list and finds by id.
 function Product() {
   const { id } = useParams()
   const { addToCart } = useCart()
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
   const [products, setProducts] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -42,6 +46,18 @@ function Product() {
     return <h2>Product not found</h2>
   }
 
+  const handleAddToCart = () => {
+    if (!user) {
+      navigate('/login', { state: { from: location } })
+      return
+    }
+
+    const added = addToCart(product, 1)
+    if (added) {
+      navigate('/cart')
+    }
+  }
+
   return (
     <section className="product-page">
       <div className="product-container">
@@ -63,7 +79,7 @@ function Product() {
 
             <div className="sizes">
               {(product.sizes || []).map((size) => (
-                <button key={size} className="option-btn">
+                <button type="button" key={size} className="option-btn">
                   {size}
                 </button>
               ))}
@@ -75,7 +91,7 @@ function Product() {
 
             <div className="colors">
               {(product.colors || []).map((color) => (
-                <button key={color} className="option-btn">
+                <button type="button" key={color} className="option-btn">
                   {color}
                 </button>
               ))}
@@ -83,9 +99,9 @@ function Product() {
           </div>
 
           <div className="product-actions">
-            <Button text="Add to Cart" onClick={() => addToCart(product, 1)} />
+            <Button type="button" text="Add to Cart" onClick={handleAddToCart} />
 
-            <Button text="Buy Now" />
+            <Button type="button" text="Buy Now" onClick={handleAddToCart} />
           </div>
         </div>
       </div>

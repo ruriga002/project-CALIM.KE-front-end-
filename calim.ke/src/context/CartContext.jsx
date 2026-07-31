@@ -48,6 +48,8 @@ export function CartProvider({ children }) {
         },
       ]
     })
+
+    return true
   }
 
   const increaseQuantity = (id) => {

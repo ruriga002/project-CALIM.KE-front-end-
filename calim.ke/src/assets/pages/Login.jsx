@@ -2,7 +2,7 @@
 // It calls the backend login helper, stores the auth token,
 // and updates the auth context after a successful login.
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { loginUser, saveAuthToken } from '../../api/login.js'
 import { useAuth } from '../../auth/useAuth.js'
 
@@ -12,7 +12,10 @@ function Login() {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
   const { login } = useAuth()
+
+  const from = location.state?.from?.pathname || '/'
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -25,7 +28,7 @@ function Login() {
         saveAuthToken(response.token)
       }
       login(response.user || response)
-      navigate('/')
+      navigate(from, { replace: true })
     } catch (err) {
       setError(err.message || 'Invalid login credentials')
     } finally {

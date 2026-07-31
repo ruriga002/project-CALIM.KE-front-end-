@@ -978,6 +978,12 @@
   color: white;
 }
 
+.option-btn.active {
+  background: var(--accent);
+  color: #050505;
+  border-color: transparent;
+}
+
 .product-actions {
   display: flex;
   gap: 15px;

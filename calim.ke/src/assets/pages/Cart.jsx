@@ -43,7 +43,7 @@ function Cart() {
         ) : (
           <>
             {cartItems.map((item) => (
-              <div className="cart-item" key={item.id}>
+              <div className="cart-item" key={`${item.id}-${JSON.stringify(item.options||{})}`}>
                 <img
                   src={item.image}
                   alt={item.name}
@@ -53,14 +53,20 @@ function Cart() {
                 <div className="cart-details">
                   <h3>{item.name}</h3>
                   <p>KES {item.price.toLocaleString()}</p>
+                  {item.options && Object.keys(item.options).length > 0 && (
+                    <p className="cart-options">
+                      {item.options.size && <span>Size: {item.options.size}</span>}
+                      {item.options.color && <span style={{ marginLeft: '0.6rem' }}>Color: {item.options.color}</span>}
+                    </p>
+                  )}
                 </div>
 
                 <div className="cart-quantity">
-                  <button onClick={() => decreaseQuantity(item.id)}>-</button>
+                  <button onClick={() => decreaseQuantity(item.id, item.options)}>-</button>
 
                   <span>{item.quantity}</span>
 
-                  <button onClick={() => increaseQuantity(item.id)}>+</button>
+                  <button onClick={() => increaseQuantity(item.id, item.options)}>+</button>
                 </div>
 
                 <div className="cart-total">
@@ -69,7 +75,7 @@ function Cart() {
 
                 <button
                   className="remove-btn"
-                  onClick={() => removeItem(item.id)}
+                  onClick={() => removeItem(item.id, item.options)}
                 >
                   Remove
                 </button>

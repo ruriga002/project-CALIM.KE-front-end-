@@ -15,6 +15,8 @@ function Product() {
   const [products, setProducts] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [selectedSize, setSelectedSize] = useState('')
+  const [selectedColor, setSelectedColor] = useState('')
 
   useEffect(() => {
     let mounted = true
@@ -35,6 +37,15 @@ function Product() {
     }
   }, [])
 
+  // set defaults when product loads
+  useEffect(() => {
+    if (!products) return
+    const p = (products || []).find((p) => String(p.id) === String(id))
+    if (!p) return
+    setSelectedSize(p.sizes?.[0] || '')
+    setSelectedColor(p.colors?.[0] || '')
+  }, [products, id])
+
   if (loading) return <h2>Loading product...</h2>
   if (error) return <div className="api-error">{error}</div>
 
@@ -46,13 +57,16 @@ function Product() {
     return <h2>Product not found</h2>
   }
 
+  
+
   const handleAddToCart = () => {
     if (!user) {
       navigate('/login', { state: { from: location } })
       return
     }
 
-    const added = addToCart(product, 1)
+    const options = { size: selectedSize, color: selectedColor }
+    const added = addToCart(product, 1, options)
     if (added) {
       navigate('/cart')
     }
@@ -79,7 +93,12 @@ function Product() {
 
             <div className="sizes">
               {(product.sizes || []).map((size) => (
-                <button type="button" key={size} className="option-btn">
+                <button
+                  type="button"
+                  key={size}
+                  className={`option-btn ${selectedSize === size ? 'active' : ''}`}
+                  onClick={() => setSelectedSize(size)}
+                >
                   {size}
                 </button>
               ))}
@@ -91,7 +110,12 @@ function Product() {
 
             <div className="colors">
               {(product.colors || []).map((color) => (
-                <button type="button" key={color} className="option-btn">
+                <button
+                  type="button"
+                  key={color}
+                  className={`option-btn ${selectedColor === color ? 'active' : ''}`}
+                  onClick={() => setSelectedColor(color)}
+                >
                   {color}
                 </button>
               ))}

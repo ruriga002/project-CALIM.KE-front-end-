@@ -1,16 +1,53 @@
-# React + Vite
+# CALIM.KE Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is the React + Vite frontend for CALIM.KE. It connects to the Flask backend for products, auth, orders, customers, collections, and admin dashboard data.
 
-Currently, two official plugins are available:
+## Run the app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+From the frontend project folder:
 
-## React Compiler
+```bash
+npm install
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The app runs locally at http://127.0.0.1:5178.
 
-## Expanding the ESLint configuration
+## Backend connection
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The frontend is configured to talk to the backend through Vite proxying.
+If you want to override the backend URL, set:
+
+```bash
+VITE_API_URL=http://127.0.0.1:5000
+```
+
+## Admin access
+
+Use the following admin credentials to sign in and access the admin dashboard:
+
+- Email: admin@calim.com
+- Password: admin123
+
+After login, open:
+
+- /admin/dashboard
+
+## Admin pages
+
+The admin area includes:
+
+- Dashboard
+- Products
+- Orders
+- Customers
+- Collections
+- Inventory
+- Settings
+
+## Build
+
+```bash
+npm run build
+```
+

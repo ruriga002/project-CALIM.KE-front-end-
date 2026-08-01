@@ -170,12 +170,12 @@ function Dashboard() {
 
                                             <td>#{order.id}</td>
 
-                                            <td>{order.user_name}</td>
+                                            <td>{order.customer_name || order.customer?.name || order.customer?.full_name || order.user_name || 'Unknown customer'}</td>
 
                                             <td>{order.status}</td>
 
                                             <td>
-                                                KES {Number(order.total).toLocaleString()}
+                                                KES {Number(order.total || 0).toLocaleString()}
                                             </td>
 
                                         </tr>

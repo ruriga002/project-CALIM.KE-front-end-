@@ -1,7 +1,15 @@
 // login.js
 // Authentication helpers for the Flask backend.
 
-const AUTH_BASES = ["/api/auth", "/api", "/auth"]
+const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "")
+const AUTH_BASES = [
+  `${API_BASE}/api/auth`,
+  `${API_BASE}/api`,
+  `${API_BASE}/auth`,
+  "/api/auth",
+  "/api",
+  "/auth",
+].filter(Boolean)
 
 function getStoredToken() {
   return localStorage.getItem("authToken")

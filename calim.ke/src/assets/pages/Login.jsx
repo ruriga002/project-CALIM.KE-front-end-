@@ -17,16 +17,34 @@ function Login() {
 
   const from = location.state?.from?.pathname || '/'
 
+  function isAdminUser(userData) {
+    if (!userData) return false
+
+    const role = userData?.role?.toString().toLowerCase()
+    return !!(
+      role === 'admin' ||
+      role === 'administrator' ||
+      userData?.is_admin === true ||
+      userData?.isAdmin === true ||
+      userData?.email === 'admin@calim.com'
+    )
+  }
+
   async function handleSubmit(event) {
     event.preventDefault()
     setLoading(true)
     setError(null)
 
     try {
-      await loginUser({ email, password })
-      const profile = await fetchUserProfile()
+      const loginResponse = await loginUser({ email, password })
+      const profile = loginResponse?.user || loginResponse?.profile || await fetchUserProfile()
       login(profile)
-      navigate(from, { replace: true })
+
+      const targetPath = from === '/' || from === '/login' || from === '/register'
+        ? (isAdminUser(profile) ? '/admin/dashboard' : '/')
+        : from
+
+      navigate(targetPath, { replace: true })
     } catch (err) {
       setError(err.message || 'Invalid login credentials')
     } finally {
@@ -60,6 +78,16 @@ function Login() {
           {error && <div className="form-error">{error}</div>}
           <button type="submit" disabled={loading}>
             {loading ? 'Logging in…' : 'Login'}
+          </button>
+          <button
+            type="button"
+            className="demo-btn"
+            onClick={() => {
+              setEmail('admin@calim.com')
+              setPassword('admin123')
+            }}
+          >
+            Use admin demo
           </button>
         </form>
         <p>

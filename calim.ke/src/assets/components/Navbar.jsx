@@ -6,6 +6,19 @@ import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../../auth/useAuth.js'
 import { useCart } from '../../context/CartContext.jsx'
 
+function isAdminUser(user) {
+  if (!user) return false
+
+  const role = user?.role?.toString().toLowerCase()
+  return !!(
+    role === 'admin' ||
+    role === 'administrator' ||
+    user?.is_admin === true ||
+    user?.isAdmin === true ||
+    user?.email === 'admin@calim.com'
+  )
+}
+
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const { user, logout } = useAuth()
@@ -46,7 +59,7 @@ function Navbar() {
           </li>
           {user ? (
             <>
-              {user.role === 'admin' && (
+              {isAdminUser(user) && (
                 <li>
                   <NavLink to="/admin/dashboard" onClick={() => setMenuOpen(false)}>
                     Admin

@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "npm --prefix ./calim.ke run dev",
-    "build": "npm --prefix ./calim.ke run build",
-    "preview": "npm --prefix ./calim.ke run preview -- --host 127.0.0.1 --port 4173"
+    "build": "npm --prefix ./calim.ke install && npm --prefix ./calim.ke run build",
+    "preview": "npm --prefix ./calim.ke run preview"
   },
   "dependencies": {
     "react": "^19.1.0",

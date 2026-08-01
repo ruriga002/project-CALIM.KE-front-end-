@@ -3,7 +3,7 @@
 // and updates auth context when registration succeeds.
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { registerUser, saveAuthToken } from '../../api/login.js'
+import { registerUser, saveAuthToken, fetchUserProfile } from '../../api/login.js'
 import { useAuth } from '../../auth/useAuth.js'
 
 function Register() {
@@ -21,11 +21,9 @@ function Register() {
     setError(null)
 
     try {
-      const response = await registerUser({ name, email, password })
-      if (response.token) {
-        saveAuthToken(response.token)
-      }
-      login(response.user || response)
+      await registerUser({ name, email, password })
+      const profile = await fetchUserProfile()
+      login(profile)
       navigate('/')
     } catch (err) {
       setError(err.message || 'Registration failed')

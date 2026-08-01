@@ -1,42 +1,35 @@
-// CollectionCard.jsx renders a set of collection highlight cards.
-// It is used to display featured product categories with images and CTA buttons.
+// CollectionCard.jsx renders CALIM collection cards for the homepage.
+// It is used to display the brand's signature pieces and hero items.
 import Button from "../components/Button";
 
 function Collections() {
   const collections = [
     {
       id: 1,
-      name: "Streetwear",
-      description: "Bold everyday fashion inspired by modern urban culture.",
-      image: "https://via.placeholder.com/350x400",
+      name: "CALIM Beanie",
+      description: "A rugged street-ready beanie designed for comfort and warmth.",
+      image: "https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhbmllcyUyMHdpdGglMjByaXZldHN8ZW58MHx8MHx8fDA%3D",
     },
     {
       id: 2,
-      name: "Essentials",
-      description: "Minimal, timeless pieces designed for everyday comfort.",
-      image: "https://via.placeholder.com/350x400",
+      name: "CALIM Jeans",
+      description: "Durable denim cut for everyday movement and a sharp urban edge.",
+      image: "https://images.unsplash.com/photo-1697678207628-6758ecf9a2cc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGN1c3RvbSUyMGJhZ2d5JTIwamVhbnN8ZW58MHx8MHx8fDA%3D",
     },
     {
       id: 3,
-      name: "Summer Collection",
-      description: "Lightweight clothing perfect for warm weather.",
-      image: "https://via.placeholder.com/350x400",
-    },
-    {
-      id: 4,
-      name: "New Arrivals",
-      description: "Discover the latest styles from CALIM.",
-      image: "https://via.placeholder.com/350x400",
+      name: "CALIM Leather Jacket",
+      description: "A statement outer layer built for confidence, texture, and utility.",
+      image: "https://plus.unsplash.com/premium_photo-1731950912462-9caa3905627d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Y3VzdG9tJTIwbGVhdGhlciUyMGphY2tldHxlbnwwfHwwfHx8MA%3D%3D",
     },
   ];
 
   return (
-    <section className="collections-page">
+    <section className="collections-page calim-collections">
       <div className="collections-header">
-        <h1>Our Collections</h1>
+        <h1>CALIM Collection</h1>
         <p>
-          Discover premium clothing collections designed for confidence,
-          comfort, and everyday style.
+          Highlighting our core pieces crafted for comfort, movement, and bold style.
         </p>
       </div>
 
@@ -46,8 +39,7 @@ function Collections() {
             <img src={collection.image} alt={collection.name} />
             <h2>{collection.name}</h2>
             <p>{collection.description}</p>
-
-            <Button text="Explore Collection" />
+            <Button text="Shop CALIM" />
           </div>
         ))}
       </div>

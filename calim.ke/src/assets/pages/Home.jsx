@@ -24,6 +24,7 @@ function Home() {
 
     loadProducts()
   }, [])
+  console.log("Products loaded:", products);
 
   const categories = ['All', ...new Set(products.map((product) => product.category || 'Other'))]
 
@@ -32,7 +33,8 @@ function Home() {
       ? products
       : products.filter((product) => product.category === activeCategory)
 
-  return (
+  
+      return (
     <>
       <Hero />
 

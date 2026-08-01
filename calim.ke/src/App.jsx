@@ -14,6 +14,13 @@ import Contact from './assets/pages/Contact'
 import Login from './assets/pages/Login'
 import Register from './assets/pages/Register'
 import Profile from './assets/pages/Profile'
+import Dashboard from './assets/pages/admin/Dashboard'
+import Products from './assets/pages/admin/Products'
+import Orders from './assets/pages/admin/Orders'
+import Customers from './assets/pages/admin/Customers'
+import Collections from './assets/pages/admin/Collections'
+import Inventory from './assets/pages/admin/Inventory'
+import Settings from './assets/pages/admin/Settings'
 import { AuthProvider } from './auth/AuthContext.jsx'
 import ProtectedRoute from './auth/ProtectedRoute.jsx'
 import { CartProvider } from './context/CartContext.jsx'
@@ -27,16 +34,8 @@ function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/shop" element={
-              <ProtectedRoute>
-                <Shop />
-              </ProtectedRoute>
-            } />
-            <Route path="/product/:id" element={
-              <ProtectedRoute>
-                <Product />
-              </ProtectedRoute>
-            } />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/product/:id" element={<Product />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
@@ -45,6 +44,42 @@ function App() {
             <Route path="/profile" element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/dashboard" element={
+              <ProtectedRoute adminOnly>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/products" element={
+              <ProtectedRoute adminOnly>
+                <Products />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/orders" element={
+              <ProtectedRoute adminOnly>
+                <Orders />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/customers" element={
+              <ProtectedRoute adminOnly>
+                <Customers />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/collections" element={
+              <ProtectedRoute adminOnly>
+                <Collections />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/inventory" element={
+              <ProtectedRoute adminOnly>
+                <Inventory />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="/admin/settings" element={
+              <ProtectedRoute adminOnly>
+                <Settings />
               </ProtectedRoute>
             } />
             <Route path="*" element={<Navigate to="/" replace />} />

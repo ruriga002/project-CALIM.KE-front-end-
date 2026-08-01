@@ -46,6 +46,13 @@ function Navbar() {
           </li>
           {user ? (
             <>
+              {user.role === 'admin' && (
+                <li>
+                  <NavLink to="/admin/dashboard" onClick={() => setMenuOpen(false)}>
+                    Admin
+                  </NavLink>
+                </li>
+              )}
               <li>
                 <NavLink to="/profile" onClick={() => setMenuOpen(false)}>
                   Account

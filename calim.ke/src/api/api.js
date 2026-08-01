@@ -4,7 +4,7 @@ import mockProducts from '../assets/data/product.js'
 
 export async function fetchProducts() {
   try {
-    const response = await fetch('/api/products')
+    const response = await fetch('http://127.0.0.1:5001/api/products')
     if (!response.ok) {
       throw new Error(`Failed to fetch products (${response.status})`)
     }

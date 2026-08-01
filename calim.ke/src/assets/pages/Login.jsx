@@ -3,7 +3,7 @@
 // and updates the auth context after a successful login.
 import { useState } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
-import { loginUser, saveAuthToken } from '../../api/login.js'
+import { loginUser, fetchUserProfile } from '../../api/login.js'
 import { useAuth } from '../../auth/useAuth.js'
 
 function Login() {
@@ -23,11 +23,9 @@ function Login() {
     setError(null)
 
     try {
-      const response = await loginUser({ email, password })
-      if (response.token) {
-        saveAuthToken(response.token)
-      }
-      login(response.user || response)
+      await loginUser({ email, password })
+      const profile = await fetchUserProfile()
+      login(profile)
       navigate(from, { replace: true })
     } catch (err) {
       setError(err.message || 'Invalid login credentials')

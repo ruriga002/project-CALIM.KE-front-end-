@@ -1,21 +1,19 @@
-// login.js contains authentication helpers for login, registration,
-// profile fetching, and token storage in localStorage.
-const authEndpoints = {
-  login: ['/api/login', '/login', '/auth/login'],
-  register: ['/api/register', '/register', '/auth/register'],
-  profile: ['/api/profile', '/profile', '/auth/profile'],
-}
+// login.js
+// Authentication helpers for the Flask backend.
+
+const AUTH_BASES = ["/api/auth", "/api", "/auth"]
 
 function getStoredToken() {
-  return localStorage.getItem('authToken')
+  return localStorage.getItem("authToken")
 }
 
 function buildHeaders() {
   const headers = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   }
 
   const token = getStoredToken()
+
   if (token) {
     headers.Authorization = `Bearer ${token}`
   }
@@ -23,94 +21,139 @@ function buildHeaders() {
   return headers
 }
 
-async function postToEndpoints(endpoints, payload) {
-  let lastError = null
-
-  for (const endpoint of endpoints) {
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: buildHeaders(),
-        body: JSON.stringify(payload),
-      })
-
-      if (response.ok) {
-        return response.json()
-      }
-
-      const text = await response.text().catch(() => '')
-      lastError = new Error(`Request to ${endpoint} failed (${response.status}) ${text}`)
-    } catch (error) {
-      lastError = error
-    }
-  }
-
-  throw lastError || new Error('Unable to reach auth endpoint')
+function extractAuthToken(payload) {
+  if (!payload || typeof payload !== "object") return null
+  if (payload.token) return payload.token
+  if (payload.access_token) return payload.access_token
+  if (payload.accessToken) return payload.accessToken
+  if (payload.authToken) return payload.authToken
+  if (payload.jwt) return payload.jwt
+  if (payload.data) return extractAuthToken(payload.data)
+  if (payload.user) return extractAuthToken(payload.user)
+  return null
 }
 
+function normalizeProfilePayload(payload) {
+  if (!payload || typeof payload !== "object") return payload
+  return payload.user || payload.data || payload.profile || payload
+}
+
+function parseJson(response) {
+  return response
+    .json()
+    .catch(() => null)
+}
+
+function buildUrls(path) {
+  return AUTH_BASES.map((base) => `${base}${path}`)
+}
+
+async function tryFetchUrls(urls, options) {
+  let lastError = null
+
+  for (const url of urls) {
+    const response = await fetch(url, options)
+    const data = await parseJson(response)
+
+    if (response.ok) {
+      return { response, data }
+    }
+
+    if (response.status === 404 || response.status === 405) {
+      continue
+    }
+
+    lastError = new Error(data?.message || data?.error || `${response.status} ${response.statusText}`)
+  }
+
+  throw lastError || new Error("Authentication endpoint did not respond successfully")
+}
+
+// ------------------------
+// LOGIN
+// ------------------------
 export async function loginUser(credentials) {
-  const payload = {
-    email: credentials?.email || credentials?.username || '',
-    password: credentials?.password || '',
+  const { response, data } = await tryFetchUrls(buildUrls("/login"), {
+    method: "POST",
+    headers: buildHeaders(),
+    body: JSON.stringify({
+      email: credentials.email,
+      password: credentials.password,
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error(data?.message || "Login failed")
   }
-  try {
-    return await postToEndpoints(authEndpoints.login, payload)
-  } catch (err) {
-    // Development fallback: return a mock token/user so local dev can continue
-    console.warn('loginUser: falling back to mock user due to error:', err.message)
-    return { token: 'dev-token', user: { id: 1, name: 'Dev User', email: payload.email || 'dev@example.com' } }
+
+  const authToken = extractAuthToken(data)
+  if (authToken) {
+    saveAuthToken(authToken)
   }
+
+  return data
 }
 
-export async function registerUser(credentials) {
-  const payload = {
-    email: credentials?.email || credentials?.username || '',
-    password: credentials?.password || '',
-    name: credentials?.name || credentials?.fullName || '',
+// ------------------------
+// REGISTER
+// ------------------------
+export async function registerUser(user) {
+  const { response, data } = await tryFetchUrls(buildUrls("/register"), {
+    method: "POST",
+    headers: buildHeaders(),
+    body: JSON.stringify({
+      full_name: user.full_name || user.name,
+      email: user.email,
+      password: user.password,
+      phone: user.phone,
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error(data?.message || "Registration failed")
   }
-  try {
-    return await postToEndpoints(authEndpoints.register, payload)
-  } catch (err) {
-    // Development fallback: simulate successful registration
-    console.warn('registerUser: falling back to mock registration due to error:', err.message)
-    return { token: 'dev-token', user: { id: 2, name: payload.name || 'New User', email: payload.email || 'new@example.com' } }
+
+  const authToken = extractAuthToken(data)
+  if (authToken) {
+    saveAuthToken(authToken)
   }
+
+  return data
 }
 
+// ------------------------
+// GET PROFILE
+// ------------------------
 export async function fetchUserProfile() {
-  let lastError = null
+  const { response, data } = await tryFetchUrls(buildUrls("/profile"), {
+    method: "GET",
+    headers: buildHeaders(),
+  })
 
-  for (const endpoint of authEndpoints.profile) {
-    try {
-      const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: buildHeaders(),
-      })
-
-      if (response.ok) {
-        return response.json()
-      }
-
-      const text = await response.text().catch(() => '')
-      lastError = new Error(`Profile request to ${endpoint} failed (${response.status}) ${text}`)
-    } catch (error) {
-      lastError = error
-    }
+  if (!response.ok) {
+    throw new Error(data?.message || "Failed to fetch profile")
   }
 
-  throw lastError || new Error('Unable to reach profile endpoint')
+  return normalizeProfilePayload(data)
 }
 
-export function saveAuthToken(token) {
-  if (token) {
-    localStorage.setItem('authToken', token)
-  }
-}
-
-export function getAuthToken() {
-  return getStoredToken()
-}
-
+// ------------------------
+// LOGOUT
+// ------------------------
 export function clearAuthToken() {
-  localStorage.removeItem('authToken')
+  localStorage.removeItem("authToken");
+}
+
+// ------------------------
+// SAVE TOKEN
+// ------------------------
+export function saveAuthToken(token) {
+  localStorage.setItem("authToken", token);
+}
+
+// ------------------------
+// GET TOKEN
+// ------------------------
+export function getAuthToken() {
+  return getStoredToken();
 }

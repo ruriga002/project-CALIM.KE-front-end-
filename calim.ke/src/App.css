@@ -774,7 +774,8 @@
 
 .contact-page {
   padding: 60px 0;
-  background: #f8f8f8;
+  background: #373232;
+  
 }
 
 .contact-container {
@@ -794,7 +795,7 @@
 
 .contact-info p {
   line-height: 1.8;
-  color: #555;
+  color: #ebe2e2;
 }
 
 .contact-details {

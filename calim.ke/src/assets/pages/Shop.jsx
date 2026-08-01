@@ -1,5 +1,6 @@
 // Shop.jsx renders the shop page and search field.
 // It fetches the full product catalog and filters results by name/category.
+
 import { useState, useEffect } from "react";
 import ProductGrid from "../components/ProductGrid";
 import { fetchProducts } from "../../api/api.js";
@@ -14,9 +15,12 @@ function Shop() {
     async function loadProducts() {
       try {
         const data = await fetchProducts();
-        setProducts(data);
+        console.table(data);
+
+        // data is already an array from fetchProducts()
+        setProducts(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to load products:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -26,16 +30,25 @@ function Shop() {
     loadProducts();
   }, []);
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(search.toLowerCase()) ||
-      product.category.toLowerCase().includes(search.toLowerCase())
-  );
+  const searchTerm = search.toLowerCase();
+
+  const filteredProducts = products.filter((product) => {
+    const name = (product.name || "").toLowerCase();
+    const category = (product.category || "").toLowerCase();
+    const description = (product.description || "").toLowerCase();
+
+    return (
+      name.includes(searchTerm) ||
+      category.includes(searchTerm) ||
+      description.includes(searchTerm)
+    );
+  });
 
   return (
     <section className="shop-page">
       <div className="shop-header">
-        <h1>Shop CALIM</h1>
+        <h1>THIS IS MY SHOP</h1>
+
         <p>
           Discover premium fashion designed for confidence, comfort, and
           everyday style.
@@ -62,7 +75,16 @@ function Shop() {
         </div>
       )}
 
-      {!loading && !error && <ProductGrid products={filteredProducts} />}
+      {!loading && !error && (
+        <ProductGrid products={filteredProducts} />
+      )}
+
+      {!loading && !error && filteredProducts.length === 0 && (
+        <div className="empty-products">
+          <h2>No products found.</h2>
+          <p>Try a different search term.</p>
+        </div>
+      )}
     </section>
   );
 }

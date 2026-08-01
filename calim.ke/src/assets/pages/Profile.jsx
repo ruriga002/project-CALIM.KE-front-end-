@@ -43,7 +43,7 @@ function Profile() {
       <div className="profile-card">
         <h1>My Account</h1>
         <p>
-          <strong>Name:</strong> {profile?.name || profile?.username || 'Unknown'}
+          <strong>Name:</strong> {profile?.name || profile?.full_name || profile?.username || 'Unknown'}
         </p>
         <p>
           <strong>Email:</strong> {profile?.email || 'Not available'}

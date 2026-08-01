@@ -1,15 +1,10 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "calim.ke/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "calim.ke/dist"
-      }
-    }
-  ],
-  "routes": [
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rootDirectory": "calim.ke",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
